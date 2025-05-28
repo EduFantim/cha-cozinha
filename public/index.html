@@ -1,19 +1,153 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lista Chá de Cozinha</title>
+    <title>CHA DE COZINHA GABI</title>
     <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;400&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
-        .indisponivel { color: gray; text-decoration: line-through; }
-        button { margin-left: 10px; }
+        body {
+            background: #f9fafb;
+            font-family: 'Poppins', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 540px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 22px;
+            box-shadow: 0 4px 20px #0001;
+            padding: 30px 28px 24px 28px;
+        }
+        .titulo {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 25px;
+        }
+        .titulo h1 {
+            font-size: 2.1rem;
+            letter-spacing: 2px;
+            color: #ff5a6e;
+            font-weight: 600;
+            margin: 0;
+            text-shadow: 1px 1px 0 #fff6, 2px 2px 4px #ffe3e5;
+        }
+        .titulo .data {
+            font-size: 1rem;
+            color: #767676;
+            font-weight: 500;
+            background: #ffe4ec;
+            border-radius: 1rem;
+            padding: 3px 18px;
+            margin-left: 15px;
+        }
+        ul#lista {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .item-lista {
+            display: flex;
+            align-items: center;
+            background: #fff5fa;
+            margin-bottom: 14px;
+            border-radius: 13px;
+            box-shadow: 0 2px 6px #fd628814;
+            padding: 12px 18px;
+            font-size: 1.04rem;
+            transition: box-shadow .18s;
+        }
+        .item-lista.indisponivel {
+            color: #c1bfbf;
+            background: #f6f7f7;
+            text-decoration: line-through;
+        }
+        .item-lista .botao {
+            margin-right: 16px;
+            font-size: 1.01rem;
+            background: #ff5a6e;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 6px 15px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            box-shadow: 0 1px 5px #ff5a6e12;
+            transition: background .2s;
+        }
+        .item-lista .botao:hover {
+            background: #e0455b;
+        }
+        .item-lista .liberar {
+            background: #2e8f4b;
+            color: #fff;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        .item-lista .liberar:hover {
+            background: #196d2d;
+        }
+        .admin-panel {
+            margin-bottom: 16px;
+            text-align: right;
+        }
+        .admin-panel button {
+            background: #b2aeff;
+            color: #241d4e;
+            font-weight: 600;
+            border: none;
+            border-radius: 7px;
+            padding: 5px 16px;
+            cursor: pointer;
+            margin-left: 7px;
+        }
+        .admin-panel button:hover {
+            background: #8579d8;
+        }
     </style>
 </head>
 <body>
-    <h2>Lista Chá de Cozinha da Gabi</h2>
-    <ul id="lista"></ul>
+    <div class="container">
+        <div class="titulo">
+            <h1>CHA DE COZINHA GABI</h1>
+            <span class="data">20 de Junho</span>
+        </div>
+
+        <div class="admin-panel">
+            <span id="admin-status"></span>
+            <button id="admin-btn">Entrar como admin</button>
+        </div>
+        <ul id="lista"></ul>
+    </div>
 
     <script>
+        let isAdmin = false;
+        const adminSenha = "gabi2024"; // Você pode trocar essa senha!
+
+        function atualizarAdminStatus() {
+            document.getElementById("admin-status").textContent = isAdmin ? "Admin ativo" : "";
+            document.getElementById("admin-btn").textContent = isAdmin ? "Sair do admin" : "Entrar como admin";
+        }
+
+        document.getElementById("admin-btn").onclick = () => {
+            if (!isAdmin) {
+                const senha = prompt("Digite a senha de admin:");
+                if (senha === adminSenha) {
+                    isAdmin = true;
+                    alert("Acesso admin concedido!");
+                } else {
+                    alert("Senha incorreta!");
+                }
+            } else {
+                isAdmin = false;
+                alert("Você saiu do modo admin.");
+            }
+            atualizarLista();
+            atualizarAdminStatus();
+        };
+
         async function atualizarLista() {
             const resp = await fetch('/api/lista');
             const lista = await resp.json();
@@ -21,13 +155,12 @@
             ul.innerHTML = '';
             lista.forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = `${item.id}. ${item.item}`;
-                if (!item.disponivel) {
-                    li.className = 'indisponivel';
-                    li.textContent += " (Indisponível)";
-                } else {
+                li.className = "item-lista" + (!item.disponivel ? " indisponivel" : "");
+                // Botão vem antes
+                if (item.disponivel) {
                     const btn = document.createElement('button');
                     btn.textContent = "Quero esse!";
+                    btn.className = "botao";
                     btn.onclick = async () => {
                         if (confirm("Tem certeza que quer escolher este item?")) {
                             const r = await fetch('/api/reservar', {
@@ -45,11 +178,35 @@
                     };
                     li.appendChild(btn);
                 }
+                li.appendChild(document.createTextNode(` ${item.id}. ${item.item} `));
+                // Se indisponível e admin, mostrar botão Liberar
+                if (!item.disponivel && isAdmin) {
+                    const liberarBtn = document.createElement('button');
+                    liberarBtn.textContent = "Liberar";
+                    liberarBtn.className = "botao liberar";
+                    liberarBtn.onclick = async () => {
+                        if (confirm("Deseja liberar este item para reserva?")) {
+                            const r = await fetch('/api/liberar', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: item.id })
+                            });
+                            if (r.ok) {
+                                alert("Item liberado com sucesso!");
+                            } else {
+                                alert("Erro ao liberar item.");
+                            }
+                            atualizarLista();
+                        }
+                    };
+                    li.appendChild(liberarBtn);
+                }
                 ul.appendChild(li);
             });
+            atualizarAdminStatus();
         }
 
-        setInterval(atualizarLista, 3000); // Atualiza lista a cada 3s
+        setInterval(atualizarLista, 3500); // Atualiza lista a cada 3,5s
         atualizarLista();
     </script>
 </body>
