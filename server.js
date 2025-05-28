@@ -48,6 +48,21 @@ app.post('/api/reservar', (req, res) => {
     }
 });
 
+// Endpoint para liberar item (admin)
+app.post('/api/liberar', (req, res) => {
+    const { id } = req.body;
+    let lista = loadList();
+    let item = lista.find(i => i.id === id);
+
+    if (item && !item.disponivel) {
+        item.disponivel = true;
+        saveList(lista);
+        return res.json({ sucesso: true });
+    } else {
+        return res.status(400).json({ erro: "Item já está disponível ou não existe" });
+    }
+});
+
 // Start do servidor
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
