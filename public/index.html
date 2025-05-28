@@ -48,7 +48,6 @@
         .item-lista {
             display: flex;
             align-items: center;
-            background: #eef3e6;
             margin-bottom: 14px;
             border-radius: 13px;
             box-shadow: 0 2px 6px #6b8e2322;
@@ -57,9 +56,15 @@
             transition: box-shadow .18s;
             min-height: 54px;
         }
+        .item-lista.linha-par {
+            background: #eef3e6;  /* verde oliva clarinho */
+        }
+        .item-lista.linha-impar {
+            background: #f8f6ef;  /* bege claro */
+        }
         .item-lista.indisponivel {
             color: #b1b39e;
-            background: #f7f9f6;
+            background: #f7f9f6 !important;
             text-decoration: line-through;
         }
         .item-lista .botao {
@@ -168,10 +173,10 @@
             const lista = await resp.json();
             const ul = document.getElementById('lista');
             ul.innerHTML = '';
-            lista.forEach(item => {
+            lista.forEach((item, idx) => {
                 const li = document.createElement('li');
-                li.className = "item-lista" + (!item.disponivel ? " indisponivel" : "");
-                // Botão vem antes
+                li.className = "item-lista " + (idx % 2 === 0 ? "linha-par" : "linha-impar");
+                if (!item.disponivel) li.className += " indisponivel";
                 if (item.disponivel) {
                     const btn = document.createElement('button');
                     btn.textContent = "Quero esse!";
@@ -194,7 +199,6 @@
                     li.appendChild(btn);
                 }
                 li.appendChild(document.createTextNode(` ${item.id}. ${item.item} `));
-                // Se indisponível e admin, mostrar botão Liberar
                 if (!item.disponivel && isAdmin) {
                     const liberarBtn = document.createElement('button');
                     liberarBtn.textContent = "Liberar";
