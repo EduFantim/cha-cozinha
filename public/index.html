@@ -182,7 +182,7 @@
                     btn.textContent = "Quero esse!";
                     btn.className = "botao";
                     btn.onclick = async () => {
-                        if (confirm("Tem certeza que quer escolher este item?")) {
+                        if (confirm(`Tem certeza que quer escolher este item?\n\n${item.id}. ${item.item}`)) {
                             const r = await fetch('/api/reservar', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
