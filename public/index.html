@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lista Chá de Cozinha</title>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; }
+        .indisponivel { color: gray; text-decoration: line-through; }
+        button { margin-left: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Lista Chá de Cozinha da Gabi</h2>
+    <ul id="lista"></ul>
+
+    <script>
+        async function atualizarLista() {
+            const resp = await fetch('/api/lista');
+            const lista = await resp.json();
+            const ul = document.getElementById('lista');
+            ul.innerHTML = '';
+            lista.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `${item.id}. ${item.item}`;
+                if (!item.disponivel) {
+                    li.className = 'indisponivel';
+                    li.textContent += " (Indisponível)";
+                } else {
+                    const btn = document.createElement('button');
+                    btn.textContent = "Quero esse!";
+                    btn.onclick = async () => {
+                        if (confirm("Tem certeza que quer escolher este item?")) {
+                            const r = await fetch('/api/reservar', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id: item.id })
+                            });
+                            if (r.ok) {
+                                alert("Item reservado com sucesso!");
+                            } else {
+                                alert("Alguém foi mais rápido! Atualize a lista.");
+                            }
+                            atualizarLista();
+                        }
+                    };
+                    li.appendChild(btn);
+                }
+                ul.appendChild(li);
+            });
+        }
+
+        setInterval(atualizarLista, 3000); // Atualiza lista a cada 3s
+        atualizarLista();
+    </script>
+</body>
+</html>
