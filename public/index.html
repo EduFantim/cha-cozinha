@@ -6,18 +6,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700;600;400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --rosa-bg: #fff0f5;
-            --rosa-card1: #fce4ec;
-            --rosa-card2: #f8bbd0;
-            --rosa-title: #e91e63;
-            --rosa-botao: #ec407a;
-            --rosa-botao-hover: #ad1457;
-            --rosa-liberar: #f06292;
-            --rosa-liberar-hover: #f8bbd0;
-            --rosa-admin: #ba68c8;
-            --rosa-admin-hover: #7b1fa2;
-            --rosa-data: #c2185b;
-            --rosa-indisponivel: #f8bbd0;
+            --rosa-bg: #fff7fa;
+            --rosa-card1: #fae7ef;
+            --rosa-card2: #ffeaf3;
+            --rosa-title: #e49ab0;
+            --rosa-gabi: #d67091;
+            --rosa-data: #c18a9d;
+            --rosa-botao: #e49ab0;
+            --rosa-botao-hover: #d67091;
+            --rosa-liberar: #f7bfd6;
+            --rosa-liberar-hover: #ffeaf3;
+            --rosa-admin: #fbeff3;
+            --rosa-admin-text: #c18a9d;
+            --rosa-admin-hover: #f6e4ee;
+            --rosa-indisponivel: #fae3ed;
         }
         body {
             background: var(--rosa-bg);
@@ -30,30 +32,39 @@
             margin: 40px auto;
             background: #fff;
             border-radius: 24px;
-            box-shadow: 0 6px 32px #e91e6322;
+            box-shadow: 0 6px 32px #e49ab032;
             padding: 34px 28px 24px 28px;
         }
         .titulo {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 0;
             margin-bottom: 18px;
         }
         .titulo h1 {
-            font-size: 2.35rem;
+            font-size: 2.1rem;
             letter-spacing: 2px;
             color: var(--rosa-title);
             font-weight: 700;
             margin: 0;
-            text-shadow: 1px 1px 0 #fff6, 2px 2px 8px #fce4ec60;
+            text-shadow: 1px 1px 0 #fff8, 2px 2px 8px #fbeff355;
             text-transform: uppercase;
+            display: inline;
+        }
+        .titulo .gabi {
+            font-size: 3.1rem; /* 1.5x maior que o título */
+            color: var(--rosa-gabi);
+            font-weight: 700;
+            letter-spacing: 4px;
+            margin-bottom: 3px;
+            line-height: 1.08;
         }
         .titulo .data {
-            font-size: 1.45rem;
+            font-size: 1.25rem;
             color: var(--rosa-data);
-            font-weight: 600;
+            font-weight: 500;
             letter-spacing: 1px;
-            margin-top: 2px;
+            margin-top: 0.7em;
         }
         ul#lista {
             list-style: none;
@@ -65,7 +76,7 @@
             align-items: center;
             margin-bottom: 14px;
             border-radius: 14px;
-            box-shadow: 0 2px 8px #e91e6320;
+            box-shadow: 0 2px 8px #e49ab018;
             padding: 13px 18px;
             font-size: 1.08rem;
             transition: box-shadow .18s;
@@ -78,7 +89,7 @@
             background: var(--rosa-card2);
         }
         .item-lista.indisponivel {
-            color: #ba7891;
+            color: #b6939e;
             background: var(--rosa-indisponivel) !important;
             text-decoration: line-through;
         }
@@ -94,7 +105,7 @@
             cursor: pointer;
             font-family: inherit;
             font-weight: 700;
-            box-shadow: 0 1px 8px #e91e6333;
+            box-shadow: 0 1px 8px #e49ab025;
             transition: background .22s, transform .12s;
             outline: none;
         }
@@ -104,7 +115,7 @@
         }
         .item-lista .liberar {
             background: var(--rosa-liberar);
-            color: #fff;
+            color: #a9617e;
             margin-left: auto;
             margin-right: 0;
             font-weight: 700;
@@ -112,7 +123,7 @@
         }
         .item-lista .liberar:hover {
             background: var(--rosa-liberar-hover);
-            color: var(--rosa-title);
+            color: var(--rosa-gabi);
         }
         .admin-panel {
             margin-bottom: 24px;
@@ -120,19 +131,22 @@
         }
         .admin-panel button {
             background: var(--rosa-admin);
-            color: #fff;
-            font-weight: 600;
+            color: var(--rosa-admin-text);
+            font-weight: 500;
             border: none;
             border-radius: 9px;
             padding: 9px 28px;
-            font-size: 1.09rem;
+            font-size: 1.01rem;
             cursor: pointer;
             margin-left: 7px;
-            box-shadow: 0 2px 9px #ba68c830;
-            transition: background .2s;
+            box-shadow: none;
+            border: 1px solid #f2cdd7;
+            transition: background .2s, color .2s;
         }
         .admin-panel button:hover {
             background: var(--rosa-admin-hover);
+            color: var(--rosa-data);
+            border: 1px solid #f7bdd3;
         }
         .admin-panel #admin-status {
             color: var(--rosa-title);
@@ -141,23 +155,24 @@
         }
         @media (max-width: 650px) {
             .container { max-width: 97vw; }
+            .titulo .gabi { font-size: 2.2rem; }
+            .titulo h1 { font-size: 1.3rem; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="titulo">
-            <h1>CHA DE COZINHA GABI</h1>
+            <span class="gabi">GABI</span>
+            <h1>CHA DE COZINHA</h1>
             <span class="data">20 de Junho</span>
         </div>
-
         <div class="admin-panel">
             <span id="admin-status"></span>
             <button id="admin-btn">Acesso Administrador</button>
         </div>
         <ul id="lista"></ul>
     </div>
-
     <script>
         let isAdmin = false;
         const adminSenha = "gabi2024"; // Você pode mudar essa senha!
